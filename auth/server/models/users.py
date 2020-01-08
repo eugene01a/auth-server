@@ -1,21 +1,11 @@
-# auth/auth/models.py
-import time
 from datetime import datetime, timedelta
-from time import time
 
 import jwt
 from flask_login import UserMixin
 from flask_user import UserManager
 
-from auth.server import app, db, bcrypt
-
-
-# Define the Role DataModel
-class Role(db.Model):
-    __tablename__ = 'roles'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True)
+from auth.server import db, bcrypt, app
+from auth.server.models.blacklist_tokens import BlacklistToken
 
 
 class User(db.Model, UserMixin):
@@ -43,8 +33,8 @@ class User(db.Model, UserMixin):
             payload = {
                 'exp': datetime.utcnow() + timedelta(days=1),
                 'iat': datetime.utcnow(),
-                'uid': user_id,
-                'rid': role_id
+                'user_id': user_id,
+                'role_id': role_id
             }
             return jwt.encode(
                 payload,
@@ -54,19 +44,6 @@ class User(db.Model, UserMixin):
         except Exception as e:
             return e
 
-    def get_reset_password_token(self, expires_in=600):
-        return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
-
-    @staticmethod
-    def verify_reset_password_token(token):
-        try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
-        except:
-            return
-        return User.query.get(id)
 
     @staticmethod
     def decode_auth_token(auth_token):
@@ -81,39 +58,11 @@ class User(db.Model, UserMixin):
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
             else:
-                return payload['uid'], payload['rid']
+                return payload
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
 
 
-# Setup Flask-User
 user_manager = UserManager(app, db, User)
-
-
-class BlacklistToken(db.Model):
-    """
-    Token Model for storing JWT tokens
-    """
-    __tablename__ = 'blacklist_tokens'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    token = db.Column(db.String(500), unique=True, nullable=False)
-    blacklisted_on = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, token):
-        self.token = token
-        self.blacklisted_on = datetime.now()
-
-    def __repr__(self):
-        return '<id: token: {}'.format(self.token)
-
-    @staticmethod
-    def check_blacklist(auth_token):
-        # check whether auth token has been blacklisted
-        res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
-        if res:
-            return True
-        else:
-            return False

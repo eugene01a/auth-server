@@ -8,3 +8,7 @@ Endpoints:
 3) Reset Password
 4) Login 
 5) Logout
+
+
+For testing, flask mail simulator must be running: 
+```python -m smtpd -n -c DebuggingServer localhost:8025```

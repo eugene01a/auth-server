@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from time import time
 
@@ -27,20 +26,26 @@ class Registration(db.Model):
         self.approved_on = approved_on
 
     def get_reset_password_token(self, role_id, expires_in=600):
-        return jwt.encode(
+        print('registration_id={}'.format(self.id))
+        print('role_id={}'.format(role_id))
+        reset_token = jwt.encode(
             {'registration_id': self.id,
              'exp': time() + expires_in,
              'role_id': role_id},
             app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+        print(reset_token)
+        return reset_token
 
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            decoded_token= jwt.decode(token, app.config['SECRET_KEY'],
-                            algorithms=['HS256'])
-            registration_id=decoded_token['registration_id']
+            print(token)
+            decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            print(decoded_token)
+            registration_id = decoded_token['registration_id']
             registration = Registration.query.get(registration_id)
             role_id = decoded_token['role_id']
-        except:
+        except Exception as e:
+            print(e)
             return
         return registration, role_id

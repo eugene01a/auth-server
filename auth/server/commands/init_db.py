@@ -1,15 +1,10 @@
-# This file defines command line commands for manage.py
-#
-# Copyright 2014 SolidBuilds.com. All rights reserved
-#
-# Authors: Ling Thio <ling.thio@gmail.com>
-
 import datetime
 
 from flask_script import Command
 from auth.server import db
-from auth.server.models.models import User, Role
-from auth.server.models.registration import Registration
+from auth.server.models.roles import Role
+from auth.server.models.users import User
+from auth.server.models.registrations import Registration
 
 
 class InitDbCommand(Command):

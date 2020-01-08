@@ -1,14 +1,13 @@
-# auth/auth/config.py
-
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 postgres_local_base = 'postgresql://postgres:@localhost/'
 database_name = 'flask_jwt_auth'
 
+
 class BaseConfig:
     """Base configuration."""
-    SECRET_KEY = 'my_precious'
+    SECRET_KEY = '553d2cc858278fc13fada7c58eec1b48fa10ee6153333a6d6b2478c4f332cc56'
     DEBUG = False
     BCRYPT_LOG_ROUNDS = 13
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -16,13 +15,13 @@ class BaseConfig:
     MAIL_PORT = 8025
     USER_EMAIL_SENDER_EMAIL = 'ichinose.household@gmail.com'
     ADMINS = ['ichinose.household@gmail.com']
-
+    FRONTEND_SERVER_NAME = 'http://localhost:4200'
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
     DEBUG = True
     BCRYPT_LOG_ROUNDS = 4
-    SQLALCHEMY_DATABASE_URI = postgres_local_base + database_name+ '_dev'
+    SQLALCHEMY_DATABASE_URI = postgres_local_base + database_name + '_dev'
 
 
 class TestingConfig(BaseConfig):

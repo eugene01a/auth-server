@@ -1,9 +1,7 @@
-import os
 import unittest
-import coverage
 
-from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager, Server
 
 from auth.server import app, db
 from auth.server.commands.init_db import InitDbCommand
@@ -35,6 +33,11 @@ def drop_db():
     """Drops the db tables."""
     db.drop_all()
 
+
+manager.add_command("runserver", Server(
+    use_debugger = False,
+    use_reloader = False,
+    host = app.config['SERVER_NAME']) )
 
 if __name__ == '__main__':
     manager.run()

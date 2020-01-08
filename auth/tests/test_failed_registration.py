@@ -1,9 +1,9 @@
 from auth.server.models.roles import Role
 from auth.tests.base import BaseTestCase, register, login, approve, admin, non_admin, reset_password, \
-    request_reset_password, pending_registrations, user_profile, all_roles, valid_reset_token
+    request_reset_password, pending_registrations, user_profile, all_roles
 
 
-class TestRegistration(BaseTestCase):
+class TestFailedRegistration(BaseTestCase):
 
     def test_registration(self):
         with self.client:
@@ -33,12 +33,7 @@ class TestRegistration(BaseTestCase):
                     non_admin_reg=reg
             self.assertIsNotNone(non_admin_reg)
 
-            #TODO get list of roles
-            roles_response, status_code = all_roles(self, admin_token)
-            self.assertEquals(status_code, 200)
-            print(roles_response)
-
-            #approve the user registration
+            #deny the user registration
             non_admin_role = Role.query.filter_by(name=non_admin['role']).first()
             approve_response, status_code = approve(self, admin_token, registration_id, non_admin_role.id)
             print(approve_response)
@@ -50,11 +45,6 @@ class TestRegistration(BaseTestCase):
             print(req_pw_reset_response)
             self.assertEquals(status_code, 200)
             reset_token = req_pw_reset_response['token']
-
-            #verify if token is valid
-            req_pw_reset_response, status_code = valid_reset_token(self, reset_token)
-            print(req_pw_reset_response)
-            self.assertEquals(status_code, 200)
 
             #reset the password for new user
             reset_pw_response, status_code = reset_password(self, reset_token, "userPW")

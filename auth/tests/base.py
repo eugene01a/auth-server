@@ -70,9 +70,31 @@ def login(self, entity, headers=None):
     return data, response.status_code
 
 
+def pending_registrations(self, admin_token):
+    response = self.client.get(
+        '/auth/pending',
+        content_type='application/json',
+        headers={'Authorization': 'Bearer ' + admin_token},
+    )
+
+    data = json.loads(response.data.decode())
+    return data, response.status_code
+
+
+def all_roles(self, admin_token):
+    response = self.client.get(
+        '/auth/roles',
+        content_type='application/json',
+        headers={'Authorization': 'Bearer ' + admin_token},
+    )
+
+    data = json.loads(response.data.decode())
+    return data, response.status_code
+
+
 def approve(self, admin_token, registration_id, role_id):
     response = self.client.post(
-        '/auth/approve',
+        '/auth/pending/approve',
         data=json.dumps(dict(
             registration_id=registration_id,
             role_id=role_id
@@ -87,18 +109,19 @@ def approve(self, admin_token, registration_id, role_id):
 
 def request_reset_password(self, admin_token, email, role_id):
     response = self.client.post(
-        '/auth/reset_password_request',
+        '/auth/password/reset/request',
         data=json.dumps(dict(email=email, role_id=role_id)),
         content_type='application/json',
         headers={'Authorization': 'Bearer ' + admin_token},
     )
+    print(response)
     data = json.loads(response.data.decode())
     return data, response.status_code
 
 
 def reset_password(self, token, password):
     response = self.client.post(
-        '/auth/reset_password/{}'.format(token),
+        '/auth/password/reset/{}'.format(token),
         data=json.dumps(dict(
             password=password
         )),
@@ -106,6 +129,19 @@ def reset_password(self, token, password):
     data = json.loads(response.data.decode())
     return data, response.status_code
 
+
+def user_profile(self, auth_token):
+    response = self.client.get('/auth/profile',
+                               content_type='application/json',
+                               headers={'Authorization': 'Bearer ' + auth_token})
+    data = json.loads(response.data.decode())
+    return data, response.status_code
+
+def valid_reset_token(self, token):
+    response = self.client.get('/auth/password/reset/{}'.format(token),
+                               content_type='application/json')
+    data = json.loads(response.data.decode())
+    return data, response.status_code
 
 class BaseTestCase(TestCase):
     """ Base Tests """

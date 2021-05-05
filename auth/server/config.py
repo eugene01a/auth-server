@@ -1,9 +1,11 @@
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-postgres_local_base = 'postgresql://postgres:@localhost/'
+db_user = 'postgres'
+db_password = 'ONLIN3-ex4m'
+db_url='localhost:5432'
+postgres_local_base = f'postgresql://{db_user}:{db_password}@{db_url}/'
 database_name = 'flask_jwt_auth'
-
 
 class BaseConfig:
     """Base configuration."""
@@ -16,6 +18,7 @@ class BaseConfig:
     USER_EMAIL_SENDER_EMAIL = 'ichinose.household@gmail.com'
     ADMINS = ['ichinose.household@gmail.com']
     FRONTEND_SERVER_NAME = 'http://localhost:4200'
+
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
@@ -31,7 +34,6 @@ class TestingConfig(BaseConfig):
     BCRYPT_LOG_ROUNDS = 4
     SQLALCHEMY_DATABASE_URI = postgres_local_base + database_name + '_test'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
-
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""

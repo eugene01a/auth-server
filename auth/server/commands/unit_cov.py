@@ -20,7 +20,7 @@ class UnitCovCommand(Command):
     """Runs the unit tests with coverage."""
 
     def run(self):
-        tests = unittest.TestLoader().discover('auth/server/tests')
+        tests = unittest.TestLoader().discover('auth/tests')
         result = unittest.TextTestRunner(verbosity=2).run(tests)
         if result.wasSuccessful():
             COV.stop()

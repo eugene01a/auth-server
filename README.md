@@ -12,3 +12,6 @@ Endpoints:
 
 For testing, flask mail simulator must be running: 
 ```python -m smtpd -n -c DebuggingServer localhost:8025```
+
+Kill process on port: 
+kill $(lsof -t -i :5000)

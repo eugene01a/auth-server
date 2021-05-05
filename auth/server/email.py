@@ -4,7 +4,7 @@ from flask import current_app
 from flask import render_template
 from flask_mail import Message
 
-from auth.server import mail, app
+from . import mail, app
 
 
 def send_async_email(app, msg):

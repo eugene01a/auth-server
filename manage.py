@@ -33,7 +33,6 @@ def drop_db():
     """Drops the db tables."""
     db.drop_all()
 
-
 manager.add_command("runserver", Server(
     use_debugger = False,
     use_reloader = False,

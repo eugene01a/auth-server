@@ -11,13 +11,15 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from auth.server.views.views import auth_blueprint
+
 
 app = Flask(__name__)
+
+
 mail = Mail(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
 app_settings = os.getenv(
     'APP_SETTINGS',
@@ -57,4 +59,5 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('AuthServer startup')
 
+from auth.server._views import auth_blueprint
 app.register_blueprint(auth_blueprint)

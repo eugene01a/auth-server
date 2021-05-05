@@ -3,8 +3,7 @@ from time import time
 
 import jwt
 
-from auth.server import app
-from auth.server import db
+from auth.server import app, db
 
 
 class Registration(db.Model):
@@ -35,6 +34,11 @@ class Registration(db.Model):
             app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
         print(reset_token)
         return reset_token
+
+    def is_approved(self):
+        if self.approved_on:
+            return True
+        return False
 
     @staticmethod
     def verify_reset_password_token(token):

@@ -66,6 +66,7 @@ def login(self, entity, headers=None):
         content_type='application/json',
         headers=headers,
     )
+    print(response)
     data = json.loads(response.data.decode())
     return data, response.status_code
 

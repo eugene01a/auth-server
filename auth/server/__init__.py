@@ -59,5 +59,5 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('AuthServer startup')
 
-from auth.server._views import auth_blueprint
+from auth.server.views import auth_blueprint
 app.register_blueprint(auth_blueprint)

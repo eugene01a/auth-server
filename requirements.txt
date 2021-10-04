@@ -1,1 +1,12 @@
+flask
+flask_bcrypt
+flask_cors
+flask_mail
+flask_migrate
+flask_login
 flask-restplus
+flask_script
+flask_sqlalchemy
+flask_testing
+flask_user
+pyjwt

@@ -9,14 +9,13 @@ from auth.server.models.roles import Role
 from auth.server.models.users import User
 from flask import Blueprint
 from flask import abort, jsonify
-from flask import request
-from flask_login import login_required
+from flask import render_template, flash, redirect, url_for, request, make_response
+from flask_login import current_user, login_required
 from flask_restplus import Api, Resource, reqparse, fields
-from psycopg2 import OperationalError
-from utils.db import extract_registration, extract_user_info
+from utils.db import extract_registration, extract_user_info, extract_role
 from utils.utils import create_json_response, check_request_credentials
+from auth.server.forms import ResetPasswordForm
 
-frontend_server = app.config['FRONTEND_SERVER_NAME']
 auth_blueprint = Blueprint('auth', __name__)
 api = Api(auth_blueprint, version=1.0, title='Authentication API', description='A simple user management API')
 
@@ -97,7 +96,7 @@ class Register(Resource):
 
                 db.session.add(registration)
                 db.session.commit()
-                return create_json_response(*success_response, registration_id=registration.id)
+                return create_json_response(*self.success_response, registration_id=registration.id)
 
             except Exception as e:
                 app.logger.error(str(e))
@@ -206,9 +205,7 @@ class Roles(Resource):
             roles_count = 0
             for role_record in role_records:
                 roles_count += 1
-                all_roles.append({
-                    'role_id': role_record.id,
-                    'role_name': role_record.name})
+                all_roles.append(extract_role(role_record))
             return create_json_response(200, 'success', "Retrieved {} possible roles".format(roles_count),
                                         roles=all_roles)
         except Exception as e:
@@ -338,7 +335,7 @@ class RequestPasswordReset(Resource):
             return create_json_response(401, 'fail', 'No registration found for provided email.')
 
 
-@user.route('/password/reset/<token>')
+@user.route('/reset_password/reset/<token>')
 class RespondPasswordReset(Resource):
     @staticmethod
     def verify_password_token(token):
@@ -360,7 +357,7 @@ class RespondPasswordReset(Resource):
         token - encoded with valid role_id, and registration_id
         '''
 
-        post_data = request.get_json()
+        post_data = request.form
         new_password = post_data['password']
         registration, role_id = Registration.verify_reset_password_token(token)
 
@@ -385,7 +382,13 @@ class RespondPasswordReset(Resource):
         '''
         Verifies
         '''
-        return self.verify_password_token(token)
+        form = ResetPasswordForm()
+        if form.validate_on_submit():
+            self.reset_password(token)
+            flash('Your password has been reset.')
+            return redirect(url_for('login'))
+        headers = {'Content-Type': 'text/html'}
+        return make_response(render_template('reset_pw.html', form=form),200,headers)
 
     def post(self, token):
         '''
@@ -407,25 +410,30 @@ class Profile(Resource):
         Retrieves a user's registration information
         '''
         # get the auth token
-        auth_header = request.headers.get('Authorization')
-        print("auth_header={}".format(auth_header))
-        if auth_header:
-            auth_token = auth_header.split(" ")[1]
-        else:
-            auth_token = ''
-        if auth_token:
-            print("auth_token={}".format(auth_token))
-            decode_response = User.decode_auth_token(auth_token)
+        try:
+            auth_header = request.headers.get('Authorization')
+            print("auth_header={}".format(auth_header))
+            if auth_header:
+                auth_token = auth_header.split(" ")[1]
+            else:
+                auth_token = ''
+            if auth_token:
 
-            # if decode returns string, assume its error message
-            if type(decode_response) == str:
-                return create_json_response(401, 'fail', decode_response)
+                print("auth_token={}".format(auth_token))
+                decode_response = User.decode_auth_token(auth_token)
 
-            user_id = decode_response['user_id']
-            if not isinstance(user_id, str):
-                user = User.query.filter_by(id=user_id).first()
-                return extract_user_info(user)
+                # if decode returns string, assume its error message
+                if type(decode_response) == str:
+                    return create_json_response(401, 'fail', decode_response)
 
-            return create_json_response(401, 'fail', "Error decoding auth token: {}".format(auth_token))
-        else:
-            return create_json_response(401, 'fail', 'Provide a valid auth token.')
+                user_id = decode_response['user_id']
+                if not isinstance(user_id, str):
+                    user = User.query.filter_by(id=user_id).first()
+                    user_info = extract_user_info(user)
+                    return create_json_response(200, 'success', "Retrieved user info", user_info=user_info)
+                return create_json_response(401, 'fail', "Error decoding auth token: {}".format(auth_token))
+            else:
+                return create_json_response(401, 'fail', 'Provide a valid auth token.')
+        except Exception as e:
+            app.logger.error(str(e))
+            return create_json_response(500, 'fail', 'Error getting profile')

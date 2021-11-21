@@ -17,7 +17,7 @@ class BaseConfig:
     MAIL_PORT = 8025
     USER_EMAIL_SENDER_EMAIL = 'ichinose.household@gmail.com'
     ADMINS = ['ichinose.household@gmail.com']
-    FRONTEND_SERVER_NAME = 'http://localhost:4200'
+    LOCAL_URL = 'http://localhost:5000'
 
 
 class DevelopmentConfig(BaseConfig):

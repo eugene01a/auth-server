@@ -7,7 +7,13 @@ flask_bcrypt
 flask_cors
 flask_mail
 flask_login
-jwt
-email_validator
+flask_bcrypt
+flask_cors
+flask_mail
+flask_login
+flask_sqlalchemy
+flask_testing
+flask_user
+pyjwt
 psycopg2
 werkzeug==0.16.0

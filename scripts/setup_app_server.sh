@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-docker run -d --name token_auth_server /
--e POSTGRES_DB=flask_jwt_auth_dev /
--e POSTGRES_PASSWORD=ONLIN3-ex4m /
+docker run -d --name token_auth_server \
+-e POSTGRES_DB=flask_jwt_auth_dev \
+-e POSTGRES_PASSWORD=ONLIN3-ex4m \
 -p 5432:5432 postgres
 
 echo "Initializing database"

@@ -13,8 +13,9 @@ def extract_registration(record):
     }
 
 
-def extract_roles(record):
-    return
+def extract_role(record):
+    return {'role_id': record.id,
+            'role_name': record.name}
 
 def extract_user_info(record):
     role = Role.query.filter_by(id=record.role_id).first()

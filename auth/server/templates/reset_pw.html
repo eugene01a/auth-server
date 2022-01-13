@@ -1,0 +1,11 @@
+<h1>Reset Password</h1>
+
+{% block content %}
+  <form method="post">
+    <label>{{form.password.label}}</label><br>
+    {{ form.password(size=32) }}<br>
+    <label>{{form.password2.label}}</label><br>
+    {{ form.password2(size=32) }}<br>
+    {{ form.submit() }}
+  </form>
+{% endblock %}

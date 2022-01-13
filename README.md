@@ -15,3 +15,8 @@ For testing, flask mail simulator must be running:
 
 Kill process on port: 
 kill $(lsof -t -i :5000)
+
+1) Setup
+install docker
+brew install postgres
+pip install -r requirements (inside virtual environment)

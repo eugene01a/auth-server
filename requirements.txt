@@ -1,0 +1,13 @@
+coverage
+flask==1.1.1
+flask-script==2.0.6
+flask-restplus==0.13.0
+flask-migrate==2.5.2
+flask_bcrypt
+flask_cors
+flask_mail
+flask_login
+jwt
+email_validator
+psycopg2
+werkzeug==0.16.0

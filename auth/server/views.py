@@ -120,7 +120,7 @@ class Login(Resource):
                 user = User.query.filter_by(registration_id=registration.id).first()
                 if user:
                     if bcrypt.check_password_hash(user.password, post_data.get('password')):
-                        auth_token = user.encode_auth_token(user.id, user.role_id).decode('utf-8')
+                        auth_token = user.encode_auth_token(user.id, user.role_id)
                         userInfo = extract_user_info(user)
                         return create_json_response(200, 'success', 'Logged in', auth_token=auth_token,
                                                     role=userInfo['role'])
@@ -436,4 +436,4 @@ class Profile(Resource):
                 return create_json_response(401, 'fail', 'Provide a valid auth token.')
         except Exception as e:
             app.logger.error(str(e))
-            return create_json_response(500, 'fail', 'Error getting profile')
+            return create_json_response(500, 'fail', 'Error getting profile')   

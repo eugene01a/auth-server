@@ -17,6 +17,12 @@ Kill process on port:
 kill $(lsof -t -i :5000)
 
 1) Setup
-install docker
-brew install postgres
-pip install -r requirements (inside virtual environment)
+Install docker
+Install postgres
+```brew install postgres```
+Inside virtual environment, install dependencies
+```pip install -r requirements```
+
+Create docker container running the database:
+```docker run -d --name token_auth_server -e POSTGRES_DB=flask_jwt_auth_dev -e POSTGRES_PASSWORD=ONLIN3-ex4m -p 5432:5432 postgres```
+

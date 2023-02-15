@@ -16,4 +16,4 @@ flask_testing
 flask_user
 pyjwt
 psycopg2
-werkzeug==0.16.0
+werkzeug==2.2.3
